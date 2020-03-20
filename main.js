@@ -1,41 +1,40 @@
-// Modules to control application life and create native browser window
-const {app, BrowserWindow} = require('electron')
-const path = require('path')
+const {app, BrowserWindow, ipcMain, remote} = require('electron')
+let mainWindow
 
-function createWindow () {
-  // Create the browser window.
-  const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
-    webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
-    }
+app.on('ready', function(){
+  var fone = "5585997646060"
+  var messager = "Teste do césar!"
+  
+  mainWindow = new BrowserWindow()
+  mainWindow.loadURL('https://web.whatsapp.com/send?phone='+fone+'&text='+messager,{userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36'});
+  mainWindow.webContents.once('dom-ready',  ()=> {
+
+
+    mainWindow.webContents.executeJavaScript(`
+      
+      var sent = false
+      function time(){
+          var send = document.querySelector("._3M-N-")
+          var text = document.querySelector("._1PRhq ._3u328")
+          if (text.innerText != "" && !sent) {
+            send.click()
+            sent = true
+          }else{
+            sent = false
+          }
+      }
+      setInterval(time, 3000)
+    `)
   })
-
-  // and load the index.html of the app.
-  mainWindow.loadFile('index.html')
-
-  // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
-}
-
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
-
-// Quit when all windows are closed.
-app.on('window-all-closed', function () {
-  // On macOS it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') app.quit()
 })
 
-app.on('activate', function () {
-  // On macOS it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (BrowserWindow.getAllWindows().length === 0) createWindow()
-})
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
+// var sent = false
+// function time(){
+//     var send = document.querySelector("._3M-N-")
+//     var text = document.querySelector("._1PRhq ._3u328")
+//     if (text.innerText != "" && !sent) {
+//       send.click()
+//       sent = true
+//     }
+// }
+// setInterval(time, 3000)
